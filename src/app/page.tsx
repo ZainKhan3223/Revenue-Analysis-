@@ -15,7 +15,14 @@ import SettingsView from '@/components/SettingsView';
 
 import Toast, { ToastMessage } from '@/components/Toast';
 
-const API_BASE_URL = '/api';
+const getApiBaseUrl = () => {
+  if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+    return ''; // Uses the next.config.ts rewrite in dev
+  }
+  return ''; // Uses vercel.json rewrite in production
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 interface Recommendation {
   type: string;
@@ -100,15 +107,18 @@ export default function DashboardPage() {
   };
 
   const fetchData = useCallback(async () => {
-    // ... existing fetchData remains the same
     setLoading(true);
     setError(null);
     try {
       const productParam = selectedProduct === 'All Products' ? '' : `?product=${encodeURIComponent(selectedProduct)}`;
-      const response = await fetch(`${API_BASE_URL}/dashboard${productParam}`);
+      const url = `${API_BASE_URL}/api/dashboard${productParam}`;
+      const response = await fetch(url);
+
       if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
+        const errorText = await response.text();
+        throw new Error(`Engine Error (${response.status}): ${errorText.substring(0, 50)}`);
       }
+
       const jsonData: DashboardData = await response.json();
       setData(jsonData);
 
@@ -124,9 +134,9 @@ export default function DashboardPage() {
       setLocalAlerts(inventoryRecs);
 
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Connection Refused';
-      console.error("Failed to fetch dashboard data:", errorMessage);
-      setError("Unable to connect to Project Intelligence Engine. Please ensure the backend server is running.");
+      const errorMessage = err instanceof Error ? err.message : 'Engine Unreachable';
+      console.error("Dashboard fetch failed:", errorMessage);
+      setError(`Intelligence Engine Sync Failed: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
