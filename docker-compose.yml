@@ -3,11 +3,11 @@ version: '3.8'
 services:
   backend:
     build:
-      context: ./backend
+      context: ./api
     ports:
       - "8000:8000"
     volumes:
-      - ./backend:/app
+      - ./api:/app
       - /app/venv # Prevent local venv from syncing
     environment:
       - PYTHONUNBUFFERED=1

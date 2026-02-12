@@ -29,12 +29,11 @@ An AI-powered revenue optimization dashboard for small businesses.
 
 ## Deployment
 
-### Vercel (Frontend)
+### Vercel (Frontend & Backend)
 1. **Import** the repository to Vercel.
 2. In the **Project Settings**:
-   - Set **Root Directory** to `frontend`.
-   - Add **Environment Variable**: `NEXT_PUBLIC_API_URL` (pointing to your backend URL).
-3. **Deploy**.
+   - Set **Root Directory** to `./` (Project Root).
+3. **Deploy**. (Backend is now automatically hosted in `/api`).
 
 ## Author
 Alex Chen
