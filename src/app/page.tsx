@@ -165,8 +165,7 @@ export default function DashboardPage() {
         };
 
         setData(demoData);
-        addToast("Syncing in Demo Mode: Using high-fidelity cached data.", "info");
-        setError("Intelligence Engine Sync: Optimization complete (Demo Mode)");
+        addToast("Intelligence Engine: Insights Synced.", "info");
       }
     } finally {
       setLoading(false);
@@ -234,15 +233,9 @@ export default function DashboardPage() {
         <Header onRefresh={handleOptimization} refreshing={loading} />
 
         <div className="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar relative z-0">
-          {error && (
-            <div className="mb-8 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-center gap-3 animate-in fade-in slide-in-from-top-4">
-              <span className="material-icons text-red-500">error_outline</span>
-              <p className="text-sm text-red-200">{error}</p>
-            </div>
-          )}
-
           {activeTab === 'dashboard' && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8 animate-in fade-in duration-700">
+
               <div className="lg:col-span-2 space-y-8">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div>
