@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Project Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0d7ff2",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101922",
+                        "accent-orange": "#ff8c00",
+                        "surface": "#1a242f",
+                        "surface-light": "#24303f"
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        .neon-glow-blue {
+            box-shadow: 0 0 15px rgba(13, 127, 242, 0.3);
+        }
+        .neon-glow-orange {
+            box-shadow: 0 0 15px rgba(255, 140, 0, 0.2);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #24303f;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex overflow-hidden">
+<aside class="w-20 lg:w-64 border-r border-primary/10 bg-background-light dark:bg-background-dark flex flex-col transition-all duration-300">
+<div class="p-6 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center neon-glow-blue">
+<span class="material-icons text-white">layers</span>
+</div>
+<span class="font-bold text-xl hidden lg:block tracking-tight text-white">Project</span>
+</div>
+<nav class="flex-1 px-4 space-y-2 mt-4">
+<a class="flex items-center gap-4 p-3 rounded-lg bg-primary/10 text-primary border border-primary/20 transition-all" href="#">
+<span class="material-icons">dashboard</span>
+<span class="hidden lg:block font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-4 p-3 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/5 transition-all" href="#">
+<span class="material-icons">analytics</span>
+<span class="hidden lg:block font-medium">Forecasting</span>
+</a>
+<a class="flex items-center gap-4 p-3 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/5 transition-all" href="#">
+<span class="material-icons">inventory_2</span>
+<span class="hidden lg:block font-medium">Inventory</span>
+</a>
+<a class="flex items-center gap-4 p-3 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/5 transition-all" href="#">
+<span class="material-icons">payments</span>
+<span class="hidden lg:block font-medium">Cash Flow</span>
+</a>
+<a class="flex items-center gap-4 p-3 rounded-lg text-slate-500 hover:text-primary hover:bg-primary/5 transition-all" href="#">
+<span class="material-icons">settings</span>
+<span class="hidden lg:block font-medium">Settings</span>
+</a>
+</nav>
+<div class="p-4 border-t border-primary/10">
+<div class="flex items-center gap-3 p-2">
+<img alt="User Profile" class="w-10 h-10 rounded-full border border-primary/30" data-alt="Corporate professional male profile picture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtqkGKn5zVh3saQhDPy6RM3UKaDjNK75Fb2GkAwI2AO6Njs-yCAxIFe8b-Ohv2DOJ0yA-w9MJKluTeXcSVwsAqQwPRuWywueIWnaHrgfoarJgxgE6rSbxv8XP96ErLmkLtck9nUA11v-9CNmcbCmIuKT2GM4S-aP01iqFna68X8H85Er0nA-jDlYtEviDnt5t8dNkjBn7nqNilEg9ZjOEx0tUKYYoJqWPGjI9lsDYDss_D2F9dRbYkwtWyzOn5JjBviukJWDCBXkQ"/>
+<div class="hidden lg:block overflow-hidden">
+<p class="text-sm font-semibold truncate">Alex Chen</p>
+<p class="text-xs text-slate-500 truncate">Admin Account</p>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col overflow-hidden">
+<header class="h-16 border-b border-primary/10 flex items-center justify-between px-8 bg-background-light dark:bg-background-dark relative z-10">
+<div class="flex items-center gap-4 overflow-hidden max-w-2xl">
+<div class="flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full border border-primary/20">
+<span class="material-icons text-primary text-sm">auto_awesome</span>
+<span class="text-sm font-medium text-primary">Project AI Insight:</span>
+</div>
+<div class="whitespace-nowrap animate-marquee text-sm text-slate-500">
+                Revenue is up 12% this month. 3 high-impact optimizations available for implementation via Project Engine.
+            </div>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative group cursor-pointer">
+<span class="material-icons text-slate-400 group-hover:text-primary transition-colors">notifications</span>
+<span class="absolute -top-1 -right-1 w-2 h-2 bg-accent-orange rounded-full"></span>
+</div>
+<button class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-primary/90 transition-all neon-glow-blue flex items-center gap-2">
+<span class="material-icons text-sm">rocket_launch</span>
+                Optimize Now
+            </button>
+</div>
+</header>
+<div class="flex-1 overflow-y-auto p-8 custom-scrollbar">
+<div class="flex flex-col xl:flex-row gap-8">
+<div class="flex-1 space-y-8">
+<div class="bg-surface dark:bg-surface rounded-xl border border-primary/10 p-6">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h2 class="text-xl font-bold">Project Revenue Forecast</h2>
+<p class="text-slate-500 text-sm">Projected vs. Actual performance analysis</p>
+</div>
+<div class="flex gap-2 bg-background-dark/50 p-1 rounded-lg">
+<button class="px-3 py-1 text-xs font-semibold rounded bg-primary text-white">1M</button>
+<button class="px-3 py-1 text-xs font-semibold rounded text-slate-500 hover:text-white">3M</button>
+<button class="px-3 py-1 text-xs font-semibold rounded text-slate-500 hover:text-white">6M</button>
+<button class="px-3 py-1 text-xs font-semibold rounded text-slate-500 hover:text-white">1Y</button>
+</div>
+</div>
+<div class="relative h-64 w-full">
+<svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 1000 300">
+<defs>
+<linearGradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#0d7ff2" stop-opacity="0.2"></stop>
+<stop offset="100%" stop-color="#0d7ff2" stop-opacity="0"></stop>
+</linearGradient>
+</defs>
+<path d="M0,250 Q100,220 200,240 T400,180 T600,200 T800,120 T1000,80 L1000,300 L0,300 Z" fill="url(#chartGradient)"></path>
+<path class="drop-shadow-lg" d="M0,250 Q100,220 200,240 T400,180 T600,200 T800,120 T1000,80" fill="none" stroke="#0d7ff2" stroke-linecap="round" stroke-width="4"></path>
+<circle class="animate-pulse" cx="800" cy="120" fill="#0d7ff2" r="6"></circle>
+<circle cx="1000" cy="80" fill="#0d7ff2" r="6"></circle>
+</svg>
+<div class="absolute bottom-0 w-full flex justify-between px-2 text-[10px] text-slate-500 pt-4">
+<span>OCT 01</span>
+<span>OCT 08</span>
+<span>OCT 15</span>
+<span>OCT 22</span>
+<span>OCT 31</span>
+</div>
+</div>
+</div>
+<div>
+<h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+<span class="material-icons text-primary">auto_fix_high</span>
+                        Project Recommendations
+                    </h3>
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+<div class="bg-surface dark:bg-surface-light p-5 rounded-xl border border-primary/10 hover:border-primary/40 transition-all group">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-primary/20 rounded-lg text-primary">
+<span class="material-icons">inventory</span>
+</div>
+<span class="text-xs font-bold text-emerald-500 px-2 py-1 bg-emerald-500/10 rounded">95% Conf.</span>
+</div>
+<h4 class="font-bold mb-1">Restock Product A</h4>
+<p class="text-xs text-slate-400 mb-4 leading-relaxed">High demand velocity detected. Risk of stockout in 4 days if no action taken.</p>
+<div class="w-full bg-slate-800 h-1.5 rounded-full mb-6">
+<div class="bg-primary h-full rounded-full w-[95%] shadow-[0_0_8px_rgba(13,127,242,0.6)]"></div>
+</div>
+<button class="w-full py-2 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-lg transition-all font-semibold text-sm">Apply Optimization</button>
+</div>
+<div class="bg-surface dark:bg-surface-light p-5 rounded-xl border border-primary/10 hover:border-primary/40 transition-all">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-primary/20 rounded-lg text-primary">
+<span class="material-icons">sell</span>
+</div>
+<span class="text-xs font-bold text-emerald-500 px-2 py-1 bg-emerald-500/10 rounded">82% Conf.</span>
+</div>
+<h4 class="font-bold mb-1">Dynamic Pricing</h4>
+<p class="text-xs text-slate-400 mb-4 leading-relaxed">Competitors increased prices by 5%. Recommendation: 3.5% price hike on Service B.</p>
+<div class="w-full bg-slate-800 h-1.5 rounded-full mb-6">
+<div class="bg-primary h-full rounded-full w-[82%] shadow-[0_0_8px_rgba(13,127,242,0.6)]"></div>
+</div>
+<button class="w-full py-2 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-lg transition-all font-semibold text-sm">Adjust Prices</button>
+</div>
+<div class="bg-surface dark:bg-surface-light p-5 rounded-xl border border-primary/10 hover:border-primary/40 transition-all">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-primary/20 rounded-lg text-primary">
+<span class="material-icons">ads_click</span>
+</div>
+<span class="text-xs font-bold text-amber-500 px-2 py-1 bg-amber-500/10 rounded">78% Conf.</span>
+</div>
+<h4 class="font-bold mb-1">Scale Ad Spend</h4>
+<p class="text-xs text-slate-400 mb-4 leading-relaxed">Regional performance in West Coast is 2x average. Boost spend by $450/day.</p>
+<div class="w-full bg-slate-800 h-1.5 rounded-full mb-6">
+<div class="bg-primary h-full rounded-full w-[78%] shadow-[0_0_8px_rgba(13,127,242,0.6)]"></div>
+</div>
+<button class="w-full py-2 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-lg transition-all font-semibold text-sm">Optimize Budget</button>
+</div>
+</div>
+</div>
+</div>
+<aside class="w-full xl:w-80 space-y-6">
+<div class="bg-surface dark:bg-surface rounded-xl border border-primary/10 p-6 neon-glow-orange overflow-hidden relative">
+<div class="absolute top-0 right-0 w-32 h-32 bg-accent-orange/5 blur-3xl -mr-16 -mt-16"></div>
+<div class="flex items-center gap-2 mb-6">
+<span class="material-icons text-accent-orange">warning</span>
+<h3 class="text-lg font-bold">High-Risk Alerts</h3>
+</div>
+<div class="space-y-4">
+<div class="p-4 bg-background-dark/30 border-l-4 border-accent-orange rounded-r-lg">
+<div class="flex justify-between text-xs text-slate-500 mb-1">
+<span>Cash Flow</span>
+<span>2h ago</span>
+</div>
+<h5 class="text-sm font-bold mb-1">Gap Detected</h5>
+<p class="text-xs text-slate-400">Incoming revenue won't cover payroll on Nov 1st. $12,400 deficit projected.</p>
+<a class="inline-block mt-3 text-xs font-bold text-accent-orange hover:underline" href="#">View Mitigation Plan</a>
+</div>
+<div class="p-4 bg-background-dark/30 border-l-4 border-slate-700 rounded-r-lg">
+<div class="flex justify-between text-xs text-slate-500 mb-1">
+<span>Invoicing</span>
+<span>5h ago</span>
+</div>
+<h5 class="text-sm font-bold mb-1">Overdue Invoices</h5>
+<p class="text-xs text-slate-400">Client "Acme Corp" is 7 days late on payment #4452 ($2,500).</p>
+<a class="inline-block mt-3 text-xs font-bold text-primary hover:underline" href="#">Send Reminder</a>
+</div>
+<div class="p-4 bg-background-dark/30 border-l-4 border-accent-orange rounded-r-lg">
+<div class="flex justify-between text-xs text-slate-500 mb-1">
+<span>Expenses</span>
+<span>12h ago</span>
+</div>
+<h5 class="text-sm font-bold mb-1">Cloud Spend Spike</h5>
+<p class="text-xs text-slate-400">AWS costs rose 40% in last 24h. Unusual traffic detected.</p>
+<a class="inline-block mt-3 text-xs font-bold text-accent-orange hover:underline" href="#">Investigate Source</a>
+</div>
+</div>
+<button class="w-full mt-6 py-3 border border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-800 transition-colors">
+                        Dismiss All
+                    </button>
+</div>
+<div class="bg-surface dark:bg-surface rounded-xl border border-primary/10 p-6">
+<h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Market Outlook</h3>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<span class="text-xs">Industry Growth</span>
+<span class="text-xs text-emerald-500 font-bold">+2.4%</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-xs">Avg. CPC</span>
+<span class="text-xs text-slate-300">$1.42</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-xs">Consumer Sentiment</span>
+<span class="text-xs text-amber-500 font-bold">Neutral</span>
+</div>
+</div>
+</div>
+</aside>
+</div>
+</div>
+</main>
+
+</body></html>

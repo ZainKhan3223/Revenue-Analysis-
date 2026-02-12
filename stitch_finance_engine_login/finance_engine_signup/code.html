@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Project | Signup</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0d7ff2",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#0a0c10",
+                        "neon-green": "#39FF14",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .neon-glow:hover {
+            box-shadow: 0 0 25px rgba(57, 255, 20, 0.45);
+        }
+        .bg-mesh {
+            background-image: radial-gradient(at 0% 0%, rgba(13, 127, 242, 0.12) 0px, transparent 50%),
+                              radial-gradient(at 100% 100%, rgba(57, 255, 20, 0.05) 0px, transparent 50%);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col items-center justify-center p-4 bg-mesh">
+<header class="mb-10 text-center">
+<div class="flex items-center justify-center gap-3 mb-6">
+<div class="w-11 h-11 bg-gradient-to-br from-primary to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-white text-2xl">rocket_launch</span>
+</div>
+<span class="text-3xl font-bold tracking-tight">Project</span>
+</div>
+<h1 class="text-3xl md:text-4xl font-bold mb-3 tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white to-slate-400">Optimize Your Revenue.</h1>
+<p class="text-slate-500 dark:text-slate-400 max-w-md mx-auto text-sm md:text-base">Experience the next generation of financial intelligence for high-growth small businesses.</p>
+</header>
+<main class="w-full max-w-md">
+<div class="bg-white dark:bg-slate-900/40 backdrop-blur-2xl border border-slate-200 dark:border-slate-800/60 p-8 rounded-2xl shadow-2xl relative overflow-hidden">
+<div class="absolute -top-24 -left-24 w-48 h-48 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+<form action="#" class="space-y-5 relative z-10">
+<div class="space-y-1.5">
+<label class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400" for="business-name">Business Name</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">corporate_fare</span>
+<input class="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700/50 rounded-xl focus:ring-2 focus:ring-primary/40 focus:border-primary outline-none transition-all placeholder:text-slate-600" id="business-name" placeholder="Acme Inc." type="text"/>
+</div>
+</div>
+<div class="space-y-1.5">
+<label class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400" for="email">Work Email</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">alternate_email</span>
+<input class="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700/50 rounded-xl focus:ring-2 focus:ring-primary/40 focus:border-primary outline-none transition-all placeholder:text-slate-600" id="email" placeholder="ceo@company.com" type="email"/>
+</div>
+</div>
+<div class="space-y-1.5">
+<div class="flex justify-between items-center">
+<label class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400" for="password">Password</label>
+</div>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">encrypted</span>
+<input class="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700/50 rounded-xl focus:ring-2 focus:ring-primary/40 focus:border-primary outline-none transition-all placeholder:text-slate-600" id="password" placeholder="••••••••" type="password"/>
+</div>
+<p class="text-[10px] text-slate-500 text-right mt-1">Min. 8 characters with one symbol</p>
+</div>
+<button class="w-full py-4 px-4 bg-neon-green text-black font-bold rounded-xl transition-all transform active:scale-[0.98] neon-glow flex items-center justify-center gap-2 mt-4 shadow-lg shadow-neon-green/10" type="submit">
+                Start Free Trial
+                <span class="material-symbols-outlined text-xl">arrow_forward</span>
+</button>
+</form>
+<div class="my-8 flex items-center gap-4">
+<div class="h-[1px] flex-1 bg-slate-200 dark:bg-slate-800"></div>
+<span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">or continue with</span>
+<div class="h-[1px] flex-1 bg-slate-200 dark:bg-slate-800"></div>
+</div>
+<button class="w-full py-3 px-4 bg-transparent border border-slate-200 dark:border-slate-700/60 rounded-xl text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all flex items-center justify-center gap-3">
+<img alt="Google Logo" class="w-5 h-5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjXCd6EjTXqwiKYPxd_AUJgT4VmQEU9DR24ubV7lidjew-LCmHAeVDCVJowS-pJy0vG_FjvNAGLssd8oedrJuo9oBGt7dcnnyASK1jNGiQPJYwBt3jwhvF8IJCs13sDWEN0BCfu0HiF5zutm9cgAizcS2XRtUYOYBSvgm-5UBUpULEr5ykjOHVwsj_ck1wPrKJk1XmArGz85_nRW4TMZOIPR_XpWGuR-LHGzZ-850PQXXctjZBC2epsCShByZHqmd-iCmR4Z9f6Rc"/>
+            Google
+        </button>
+<p class="mt-8 text-center text-sm text-slate-500">
+            Already registered? 
+            <a class="text-primary hover:text-blue-400 transition-colors font-semibold" href="#">Sign in</a>
+</p>
+</div>
+</main>
+<footer class="mt-12 w-full max-w-md px-4">
+<div class="flex flex-wrap justify-center gap-x-8 gap-y-3 text-[11px] text-slate-500 dark:text-slate-500 font-medium">
+<a class="hover:text-white transition-colors" href="#">Terms</a>
+<a class="hover:text-white transition-colors" href="#">Privacy</a>
+<a class="hover:text-white transition-colors" href="#">Security</a>
+<a class="hover:text-white transition-colors" href="#">Support</a>
+</div>
+<p class="mt-8 text-center text-[10px] text-slate-600 dark:text-slate-700 uppercase tracking-[0.2em]">
+        © 2024 Project Revenue Engine. All rights reserved.
+    </p>
+</footer>
+<div class="fixed top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none -z-10 translate-x-1/2 -translate-y-1/2"></div>
+<div class="fixed bottom-0 left-0 w-[400px] h-[400px] bg-neon-green/5 rounded-full blur-[100px] pointer-events-none -z-10 -translate-x-1/4 translate-y-1/4"></div>
+
+</body></html>
