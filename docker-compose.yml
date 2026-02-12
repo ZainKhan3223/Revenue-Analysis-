@@ -11,15 +11,15 @@ services:
       - /app/venv # Prevent local venv from syncing
     environment:
       - PYTHONUNBUFFERED=1
-    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn index:app --host 0.0.0.0 --port 8000 --reload
 
   frontend:
     build:
-      context: ./frontend
+      context: .
     ports:
       - "3000:3000"
     volumes:
-      - ./frontend:/app
+      - .:/app
       - /app/node_modules
     environment:
       # Use internal backend URL for SSR but browser uses localhost
