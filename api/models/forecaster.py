@@ -1,14 +1,14 @@
 import pandas as pd
 import numpy as np
-from sklearn.linear_model import LinearRegression
 
 class SalesForecaster:
     def __init__(self):
-        self.model = LinearRegression()
+        # We don't need a formal model object if we use numpy functions directly
+        pass
 
     def predict_next_weeks(self, historical_data: pd.Series, weeks: int = 4):
         """
-        Uses a simple linear regression to forecast future values based on history.
+        Uses a simple linear regression (via numpy) to forecast future values based on history.
         Args:
             historical_data: pd.Series of historical values (e.g. sales or units) sorted by time.
             weeks: Number of steps to forecast.
@@ -21,14 +21,17 @@ class SalesForecaster:
             return [float(last_val)] * weeks
 
         # Prepare simple time features (ordinal index)
-        X = np.array(range(len(historical_data))).reshape(-1, 1)
+        x = np.arange(len(historical_data))
         y = historical_data.values
 
-        self.model.fit(X, y)
+        # Perform linear regression: y = mx + c
+        # polyfit(x, y, 1) returns [m, c]
+        coeffs = np.polyfit(x, y, 1)
+        m, c = coeffs
 
-        # Predict future steps
-        future_X = np.array(range(len(historical_data), len(historical_data) + weeks)).reshape(-1, 1)
-        predictions = self.model.predict(future_X)
+        # Predict future steps: x_future = len(history) to len(history) + weeks
+        future_x = np.arange(len(historical_data), len(historical_data) + weeks)
+        predictions = m * future_x + c
         
         # Ensure non-negative predictions
-        return [max(0, float(round(p, 2))) for p in predictions]
+        return [max(0.0, float(round(p, 2))) for p in predictions]

@@ -2,9 +2,7 @@ fastapi
 uvicorn
 pandas
 numpy
-scikit-learn
 python-multipart
 python-jose[cryptography]
 passlib[bcrypt]
 python-dotenv
-cors
