@@ -3,11 +3,11 @@ version: '3.8'
 services:
   backend:
     build:
-      context: ./api
+      context: ./backend
     ports:
       - "8000:8000"
     volumes:
-      - ./api:/app
+      - ./backend:/app
       - /app/venv # Prevent local venv from syncing
     environment:
       - PYTHONUNBUFFERED=1
@@ -15,12 +15,13 @@ services:
 
   frontend:
     build:
-      context: .
+      context: ./frontend
     ports:
       - "3000:3000"
     volumes:
-      - .:/app
+      - ./frontend:/app
       - /app/node_modules
+
     environment:
       # Use internal backend URL for SSR but browser uses localhost
       # Actually Next.js public env vars are for browser.
