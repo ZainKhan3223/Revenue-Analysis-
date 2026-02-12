@@ -16,7 +16,7 @@ const SettingsView = () => {
                             <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Engine Base URL</label>
                             <input
                                 type="text"
-                                defaultValue="http://localhost:8000"
+                                defaultValue={process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}
                                 className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-primary transition-colors"
                                 readOnly
                             />
