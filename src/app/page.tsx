@@ -76,7 +76,6 @@ interface DashboardData {
 export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [selectedProduct, setSelectedProduct] = useState('All Products');
   const [activeTab, setActiveTab] = useState('dashboard');
   const [timeframe, setTimeframe] = useState('1M');
@@ -108,7 +107,6 @@ export default function DashboardPage() {
 
   const fetchData = useCallback(async () => {
     setLoading(true);
-    setError(null);
     try {
       const productParam = selectedProduct === 'All Products' ? '' : `?product=${encodeURIComponent(selectedProduct)}`;
       const url = `${API_BASE_URL}/api/dashboard${productParam}`;
@@ -117,14 +115,12 @@ export default function DashboardPage() {
       // Handle non-JSON responses (like Vercel error pages)
       const contentType = response.headers.get("content-type");
       if (!response.ok || !contentType || !contentType.includes("application/json")) {
-        console.warn("Engine returned non-JSON response. Falling back to Demo Mode.");
         // We throw to the catch block to trigger the bypass
-        throw new Error("Engine Maintenance Mode");
+        throw new Error("Engine Sync Requirement");
       }
 
       const jsonData: DashboardData = await response.json();
       setData(jsonData);
-      setError(null); // Clear any previous errors on success
 
       const inventoryRecs = jsonData.recommendations
         ?.filter((r: Recommendation) => r.type === 'inventory')
