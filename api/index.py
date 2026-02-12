@@ -83,16 +83,14 @@ async def get_dashboard_data(product: str = None):
             # Let's forecast SALES.
             
             # Resample to monthly sales
-            # Ensure we have a datetime index
             temp_df = product_df.set_index('date')
-            monthly_sales_series = temp_df['sales'].resample('ME').sum().fillna(0)
+            if not temp_df.empty:
+                # Use 'M' for better compatibility across pandas versions
+                monthly_sales_series = temp_df['sales'].resample('M').sum().fillna(0)
+            else:
+                monthly_sales_series = pd.Series(dtype=float)
             
             # Forecast future sales
-            # Using 4 weeks/periods? Original code did 4 predictions.
-            # If we resample by Month ('M'), 4 steps = 4 months.
-            # Original code used: product_df['ORDERDATE'].dt.to_period('M') and generated 4 predictions.
-            # So it was monthly.
-            
             predictions = forecaster.predict_next_weeks(monthly_sales_series, weeks=4)
             
             # Get historical data (last 4 months)
@@ -141,18 +139,18 @@ async def get_dashboard_data(product: str = None):
             })
 
         # Generate cash flow data (Simulated revenue vs expenses)
-        # Resample total sales by month
-        total_monthly_sales = df.set_index('date')['sales'].resample('ME').sum().tail(6)
         cash_flow = []
-        for i, (date, revenue) in enumerate(total_monthly_sales.items()):
-            # Simulate expenses as a percentage of revenue plus some fixed costs
-            expenses = revenue * 0.7 + np.random.randint(5000, 15000)
-            cash_flow.append({
-                "month": date.strftime('%b %Y'),
-                "revenue": round(revenue, 2),
-                "expenses": round(expenses, 2),
-                "net": round(revenue - expenses, 2)
-            })
+        if not df.empty:
+            total_monthly_sales = df.set_index('date')['sales'].resample('M').sum().tail(6)
+            for i, (date, revenue) in enumerate(total_monthly_sales.items()):
+                # Simulate expenses as a percentage of revenue plus some fixed costs
+                expenses = revenue * 0.7 + np.random.randint(5000, 15000)
+                cash_flow.append({
+                    "month": date.strftime('%b %Y'),
+                    "revenue": round(revenue, 2),
+                    "expenses": round(expenses, 2),
+                    "net": round(revenue - expenses, 2)
+                })
 
         return {
             "recommendations": all_recommendations,
