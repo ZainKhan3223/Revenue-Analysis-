@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, APIRouter
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
@@ -15,7 +15,7 @@ app = FastAPI(title="Project Revenue Engine API")
 # Path to the actual sales data
 DATA_PATH = os.path.join(os.path.dirname(__file__), "sales_data_sample.csv")
 
-# Enable CORS for Next.js frontend
+# Enable CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -24,9 +24,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/health")
+router = APIRouter(prefix="/api")
+
+@router.get("/health")
 async def health_check():
     return {"status": "ok"}
+
+@router.get("/")
+async def api_root():
+    return {"message": "Project Revenue Engine API is running (Refactored)"}
+
+app.include_router(router)
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
@@ -36,11 +44,7 @@ async def global_exception_handler(request: Request, exc: Exception):
         content={"message": "Internal Server Error", "detail": str(exc), "traceback": traceback.format_exc()},
     )
 
-@app.get("/")
-async def root():
-    return {"message": "Project Revenue Engine API is running (Refactored)"}
-
-@app.get("/dashboard")
+@router.get("/dashboard")
 async def get_dashboard_data(product: str = None):
     """
     Returns aggregated dashboard data: Forecasts, Recommendations, and Alerts.
