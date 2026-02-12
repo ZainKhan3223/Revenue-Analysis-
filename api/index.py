@@ -12,9 +12,6 @@ from services.decision_engine import DecisionEngine
 
 app = FastAPI(title="Project Revenue Engine API")
 
-# Path to the actual sales data
-DATA_PATH = os.path.join(os.path.dirname(__file__), "sales_data_sample.csv")
-
 # Enable CORS
 app.add_middleware(
     CORSMiddleware,
@@ -24,17 +21,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-router = APIRouter(prefix="/api")
-
-@router.get("/health")
-async def health_check():
-    return {"status": "ok"}
-
-@router.get("/")
-async def api_root():
-    return {"message": "Project Revenue Engine API is running (Refactored)"}
-
-app.include_router(router)
+# Path to the actual sales data
+DATA_PATH = os.path.join(os.path.dirname(__file__), "sales_data_sample.csv")
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
@@ -44,7 +32,19 @@ async def global_exception_handler(request: Request, exc: Exception):
         content={"message": "Internal Server Error", "detail": str(exc), "traceback": traceback.format_exc()},
     )
 
-@router.get("/dashboard")
+@app.get("/api/health")
+@app.get("/health")
+async def health_check():
+    return {"status": "ok"}
+
+@app.get("/api")
+@app.get("/")
+async def api_root():
+    return {"message": "Project Revenue Engine API is running"}
+
+# Dashboard endpoints
+@app.get("/api/dashboard")
+@app.get("/dashboard")
 async def get_dashboard_data(product: str = None):
     """
     Returns aggregated dashboard data: Forecasts, Recommendations, and Alerts.
@@ -172,4 +172,4 @@ async def get_dashboard_data(product: str = None):
         raise e
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("index:app", host="0.0.0.0", port=8000, reload=True)
