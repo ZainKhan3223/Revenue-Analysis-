@@ -15,24 +15,7 @@ interface AlertsPanelProps {
 }
 
 const AlertsPanel = ({ alerts: dynamicAlerts, onDismiss, onViewMitigation }: AlertsPanelProps) => {
-    const defaultAlerts: Alert[] = [
-        {
-            type: 'Cash Flow',
-            time: '2h ago',
-            title: 'Gap Detected',
-            description: "Incoming revenue won't cover payroll on Nov 1st. $12,400 deficit projected.",
-            risk: 'high'
-        },
-        {
-            type: 'Invoicing',
-            time: '5h ago',
-            title: 'Overdue Invoices',
-            description: 'Client "Acme Corp" is 7 days late on payment #4452 ($2,500).',
-            risk: 'low'
-        }
-    ];
-
-    const displayAlerts = dynamicAlerts && dynamicAlerts.length > 0 ? dynamicAlerts : defaultAlerts;
+    const displayAlerts = dynamicAlerts && dynamicAlerts.length > 0 ? dynamicAlerts : [];
 
     return (
         <aside className="w-full xl:w-80 space-y-6">
@@ -41,38 +24,53 @@ const AlertsPanel = ({ alerts: dynamicAlerts, onDismiss, onViewMitigation }: Ale
                 <div className="flex items-center gap-2 mb-6 text-white">
                     <span className="material-icons text-accent-orange">warning</span>
                     <h3 className="text-lg font-bold">High-Risk Alerts</h3>
+                    {displayAlerts.length > 0 && (
+                        <span className="ml-auto bg-accent-orange/20 text-accent-orange text-[10px] font-bold px-2 py-0.5 rounded-full">
+                            {displayAlerts.length}
+                        </span>
+                    )}
                 </div>
 
                 <div className="space-y-4 text-white">
-                    {displayAlerts.map((alert, index) => (
-                        <div
-                            key={index}
-                            className={`p-4 bg-black/40 border-l-4 rounded-r-lg ${alert.risk === 'high' ? 'border-accent-orange' : 'border-slate-700'
-                                }`}
-                        >
-                            <div className="flex justify-between text-xs text-slate-500 mb-1">
-                                <span>{alert.type}</span>
-                                <span>{alert.time}</span>
-                            </div>
-                            <h5 className="text-sm font-bold mb-1 text-white">{alert.title}</h5>
-                            <p className="text-xs text-slate-400">{alert.description}</p>
-                            <button
-                                onClick={() => onViewMitigation ? onViewMitigation(alert.title, alert.description) : console.log(`Viewing mitigation for: ${alert.title}`)}
-                                className={`inline-block mt-3 text-xs font-bold hover:underline cursor-pointer ${alert.risk === 'high' ? 'text-accent-orange' : 'text-primary'
+                    {displayAlerts.length === 0 ? (
+                        <div className="p-4 bg-black/40 rounded-lg text-center">
+                            <span className="material-icons text-emerald-500 text-2xl mb-2 block">verified</span>
+                            <p className="text-sm text-slate-400">No active alerts</p>
+                            <p className="text-[10px] text-slate-500 mt-1">All systems nominal</p>
+                        </div>
+                    ) : (
+                        displayAlerts.map((alert, index) => (
+                            <div
+                                key={index}
+                                className={`p-4 bg-black/40 border-l-4 rounded-r-lg ${alert.risk === 'high' ? 'border-accent-orange' : 'border-slate-700'
                                     }`}
                             >
-                                {alert.risk === 'high' ? 'View Mitigation Plan' : 'Send Reminder'}
-                            </button>
-                        </div>
-                    ))}
+                                <div className="flex justify-between text-xs text-slate-500 mb-1">
+                                    <span>{alert.type}</span>
+                                    <span>{alert.time}</span>
+                                </div>
+                                <h5 className="text-sm font-bold mb-1 text-white">{alert.title}</h5>
+                                <p className="text-xs text-slate-400">{alert.description}</p>
+                                <button
+                                    onClick={() => onViewMitigation ? onViewMitigation(alert.title, alert.description) : console.log(`Viewing mitigation for: ${alert.title}`)}
+                                    className={`inline-block mt-3 text-xs font-bold hover:underline cursor-pointer ${alert.risk === 'high' ? 'text-accent-orange' : 'text-primary'
+                                        }`}
+                                >
+                                    {alert.risk === 'high' ? 'View Mitigation Plan' : 'View Details'}
+                                </button>
+                            </div>
+                        ))
+                    )}
                 </div>
 
-                <button
-                    onClick={onDismiss}
-                    className="w-full mt-6 py-3 border border-white/10 rounded-lg text-sm font-medium hover:bg-white/5 transition-colors text-white hover:scale-105 active:scale-95"
-                >
-                    Dismiss All
-                </button>
+                {displayAlerts.length > 0 && (
+                    <button
+                        onClick={onDismiss}
+                        className="w-full mt-6 py-3 border border-white/10 rounded-lg text-sm font-medium hover:bg-white/5 transition-colors text-white hover:scale-105 active:scale-95"
+                    >
+                        Dismiss All
+                    </button>
+                )}
             </div>
 
             <div className="bg-white/5 rounded-xl border border-white/10 p-6">

@@ -7,11 +7,24 @@ interface CashFlowItem {
     net: number;
 }
 
-interface CashFlowViewProps {
-    data: CashFlowItem[];
+interface CashFlowStats {
+    total_revenue: number;
+    profit_margin: number;
+    outstanding_ar: number;
+    projected_runway_months: number;
 }
 
-const CashFlowView = ({ data }: CashFlowViewProps) => {
+interface CashFlowViewProps {
+    data: CashFlowItem[];
+    stats?: CashFlowStats;
+}
+
+const CashFlowView = ({ data, stats }: CashFlowViewProps) => {
+    const totalRev = stats?.total_revenue || data.reduce((sum, d) => sum + d.revenue, 0);
+    const margin = stats?.profit_margin || 0;
+    const ar = stats?.outstanding_ar || 0;
+    const runway = stats?.projected_runway_months || 0;
+
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
             <div>
@@ -57,23 +70,23 @@ const CashFlowView = ({ data }: CashFlowViewProps) => {
                 <div className="space-y-6">
                     <div className="glass-panel p-6 rounded-2xl border border-primary/20 bg-primary/5">
                         <h4 className="text-xs font-bold text-primary uppercase tracking-widest mb-2">Projected Runway</h4>
-                        <p className="text-4xl font-bold text-white">14.2 Mo</p>
-                        <p className="text-xs text-slate-400 mt-2">Based on avg burn of $42k/mo</p>
+                        <p className="text-4xl font-bold text-white">{runway.toFixed(1)} Mo</p>
+                        <p className="text-xs text-slate-400 mt-2">Based on avg monthly burn rate</p>
                     </div>
                     <div className="glass-panel p-6 rounded-2xl border border-white/5">
                         <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Quick Stats</h4>
                         <div className="space-y-4">
                             <div className="flex justify-between">
                                 <span className="text-sm text-slate-400">Total Revenue</span>
-                                <span className="text-sm font-bold text-white">$1.2M</span>
+                                <span className="text-sm font-bold text-white">${totalRev >= 1000000 ? `${(totalRev / 1000000).toFixed(1)}M` : `${(totalRev / 1000).toFixed(0)}k`}</span>
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-sm text-slate-400">Profit Margin</span>
-                                <span className="text-sm font-bold text-emerald-500">24%</span>
+                                <span className={`text-sm font-bold ${margin >= 0 ? 'text-emerald-500' : 'text-rose-500'}`}>{margin.toFixed(1)}%</span>
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-sm text-slate-400">Outstanding AR</span>
-                                <span className="text-sm font-bold text-amber-500">$24,500</span>
+                                <span className="text-sm font-bold text-amber-500">${ar >= 1000 ? `${(ar / 1000).toFixed(1)}k` : ar.toLocaleString()}</span>
                             </div>
                         </div>
                     </div>

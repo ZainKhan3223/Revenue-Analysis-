@@ -1,0 +1,8 @@
+product_name,units_sold,revenue,growth_rate
+Classic Cars,1250,450000,0.12
+Motorcycles,850,150000,0.08
+Planes,120,600000,0.05
+Ships,45,350000,-0.02
+Trains,210,120000,0.04
+Trucks and Buses,420,280000,0.09
+Vintage Cars,680,320000,0.15

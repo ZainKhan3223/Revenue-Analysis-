@@ -4,6 +4,8 @@ interface ForecastItem {
     product: string;
     predictions: number[];
     historical: number[];
+    velocity?: number;
+    confidence?: number;
 }
 
 interface ForecastingViewProps {
@@ -25,17 +27,21 @@ const ForecastingView = ({ data }: ForecastingViewProps) => {
                             <tr className="bg-white/5 border-b border-white/10">
                                 <th className="px-6 py-4 text-[10px] uppercase font-bold text-slate-500 tracking-widest">Product Line</th>
                                 <th className="px-6 py-4 text-[10px] uppercase font-bold text-slate-500 tracking-widest text-center">Prediction Timeline</th>
+                                <th className="px-6 py-4 text-[10px] uppercase font-bold text-slate-500 tracking-widest text-center">Velocity</th>
+                                <th className="px-6 py-4 text-[10px] uppercase font-bold text-slate-500 tracking-widest text-center">Confidence</th>
                                 <th className="px-6 py-4 text-[10px] uppercase font-bold text-slate-500 tracking-widest text-right">Growth Est.</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
                             {data.map((item, index) => {
-                                // Calculate dynamic growth
                                 const avgHistorical = item.historical.length > 0
                                     ? item.historical.reduce((a, b) => a + b, 0) / item.historical.length
                                     : 1;
                                 const avgPrediction = item.predictions.reduce((a, b) => a + b, 0) / item.predictions.length;
                                 const growth = ((avgPrediction / avgHistorical) - 1) * 100;
+
+                                const velocityVal = item.velocity !== undefined ? item.velocity : 0;
+                                const confidenceVal = item.confidence !== undefined ? item.confidence : 0;
 
                                 return (
                                     <tr key={index} className="hover:bg-white/5 transition-colors group">
@@ -61,12 +67,30 @@ const ForecastingView = ({ data }: ForecastingViewProps) => {
                                                 ))}
                                             </div>
                                         </td>
+                                        <td className="px-6 py-6 text-center">
+                                            <span className={`text-sm font-bold ${velocityVal >= 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
+                                                {velocityVal >= 0 ? '+' : ''}{(velocityVal * 100).toFixed(1)}%
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-6 text-center">
+                                            <div className="flex flex-col items-center gap-1">
+                                                <span className={`text-sm font-bold ${confidenceVal >= 0.8 ? 'text-emerald-500' : 'text-amber-500'}`}>
+                                                    {(confidenceVal * 100).toFixed(0)}%
+                                                </span>
+                                                <div className="w-16 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                                                    <div
+                                                        className={`h-full rounded-full ${confidenceVal >= 0.8 ? 'bg-emerald-500' : 'bg-amber-500'}`}
+                                                        style={{ width: `${confidenceVal * 100}%` }}
+                                                    ></div>
+                                                </div>
+                                            </div>
+                                        </td>
                                         <td className="px-6 py-6 text-right vertical-middle">
                                             <div className="flex flex-col items-end">
                                                 <span className={`text-lg font-bold ${growth >= 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
                                                     {growth >= 0 ? '+' : ''}{growth.toFixed(1)}%
                                                 </span>
-                                                <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">Velocity Score</span>
+                                                <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">Growth Score</span>
                                             </div>
                                         </td>
                                     </tr>

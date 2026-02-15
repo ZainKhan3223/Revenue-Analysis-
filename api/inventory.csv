@@ -1,0 +1,8 @@
+product_name,stock,reorder_threshold
+Classic Cars,120,50
+Motorcycles,15,30
+Planes,5,8
+Ships,12,10
+Trains,45,20
+Trucks and Buses,85,40
+Vintage Cars,92,60
