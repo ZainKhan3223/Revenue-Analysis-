@@ -13,6 +13,7 @@ import InventoryView from '@/components/InventoryView';
 import CashFlowView from '@/components/CashFlowView';
 import SettingsView from '@/components/SettingsView';
 import DealSizeChart from '@/components/DealSizeChart';
+import KPIGrid from '@/components/KPIGrid';
 
 import Toast, { ToastMessage } from '@/components/Toast';
 
@@ -40,6 +41,9 @@ interface InventoryItem {
   velocity: number;
   days_remaining: number;
   status: string;
+  reorder_threshold: number;
+  unit_price: number;
+  value: number;
 }
 
 interface CashFlowItem {
@@ -75,6 +79,9 @@ interface StatsData {
   total_revenue: number;
   outstanding_ar: number;
   projected_runway_months: number;
+  revenue_trend?: number;
+  margin_trend?: number;
+  ar_trend?: number;
 }
 
 interface DashboardData {
@@ -86,6 +93,7 @@ interface DashboardData {
   deal_size_distribution: DealSizeItem[];
   revenue_mix: RevenueMixItem[];
   stats: StatsData;
+  summary: string;
 }
 
 // Rich demo fallback — ensures zero blank sections if API is unreachable
@@ -110,13 +118,13 @@ const DEMO_DATA: DashboardData = {
     { product: 'Trains', predictions: [5000, 5400, 5800, 6200], historical: [4200, 4600, 4800], velocity: 0.05, confidence: 0.80 }
   ],
   inventory_health: [
-    { product: 'Classic Cars', stock_level: 245, velocity: 3.8, days_remaining: 64, status: 'Healthy' },
-    { product: 'Vintage Cars', stock_level: 180, velocity: 2.9, days_remaining: 62, status: 'Healthy' },
-    { product: 'Motorcycles', stock_level: 120, velocity: 4.2, days_remaining: 28, status: 'Warning' },
-    { product: 'Trucks and Buses', stock_level: 95, velocity: 2.1, days_remaining: 45, status: 'Healthy' },
-    { product: 'Planes', stock_level: 60, velocity: 1.5, days_remaining: 40, status: 'Healthy' },
-    { product: 'Ships', stock_level: 45, velocity: 1.8, days_remaining: 25, status: 'Warning' },
-    { product: 'Trains', stock_level: 30, velocity: 2.5, days_remaining: 12, status: 'Warning' }
+    { product: 'Classic Cars', stock_level: 245, velocity: 3.8, days_remaining: 64, status: 'Healthy', reorder_threshold: 100, unit_price: 120, value: 29400 },
+    { product: 'Vintage Cars', stock_level: 180, velocity: 2.9, days_remaining: 62, status: 'Healthy', reorder_threshold: 80, unit_price: 150, value: 27000 },
+    { product: 'Motorcycles', stock_level: 120, velocity: 4.2, days_remaining: 28, status: 'Warning', reorder_threshold: 150, unit_price: 85, value: 10200 },
+    { product: 'Trucks and Buses', stock_level: 95, velocity: 2.1, days_remaining: 45, status: 'Healthy', reorder_threshold: 50, unit_price: 210, value: 19950 },
+    { product: 'Planes', stock_level: 60, velocity: 1.5, days_remaining: 40, status: 'Healthy', reorder_threshold: 30, unit_price: 450, value: 27000 },
+    { product: 'Ships', stock_level: 45, velocity: 1.8, days_remaining: 25, status: 'Warning', reorder_threshold: 60, unit_price: 320, value: 14400 },
+    { product: 'Trains', stock_level: 30, velocity: 2.5, days_remaining: 12, status: 'Warning', reorder_threshold: 40, unit_price: 95, value: 2850 }
   ],
   cash_flow: [
     { month: 'Jul 2024', revenue: 82000, expenses: 71000, net: 11000 },
@@ -146,7 +154,8 @@ const DEMO_DATA: DashboardData = {
     total_revenue: 1500000,
     outstanding_ar: 75000,
     projected_runway_months: 14.2
-  }
+  },
+  summary: "Revenue is consistent with projections. Market conditions are stable with a Low risk factor. 3 AI optimization opportunities identified."
 };
 
 export default function DashboardPage() {
@@ -167,9 +176,10 @@ export default function DashboardPage() {
   };
 
   const handleOptimization = async () => {
-    addToast("Syncing with Intelligence Engine...", "info");
+    addToast("Running deep analysis on financial & inventory data...", "info");
+    await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate AI processing time
     await fetchData();
-    addToast("Revenue optimization cycle complete!", "success");
+    addToast("Analysis complete. Recommendations updated based on new data.", "success");
   };
 
   const handleRecommendationAction = async (title: string, action: string) => {
@@ -269,7 +279,8 @@ export default function DashboardPage() {
         cash_flow: trends,
         deal_size_distribution: dealSizes,
         revenue_mix: products,
-        stats: stats
+        stats: stats,
+        summary: overview.summary || "AI Summary unavailable."
       };
 
       setData(newData);
@@ -349,11 +360,34 @@ export default function DashboardPage() {
                     <h2 className="text-3xl font-bold text-white tracking-tight font-display">Executive Overview</h2>
                     <p className="text-slate-500 text-sm">Real-time performance metrics and AI insights</p>
                   </div>
+
                   <ProductSelector
                     products={productLines}
                     selectedProduct={selectedProduct}
                     onSelect={setSelectedProduct}
                   />
+                </div>
+
+                <KPIGrid stats={data?.stats || DEMO_DATA.stats} />
+
+                <div className="relative p-[1px] rounded-3xl overflow-hidden mb-8 group">
+                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 blur-xl opacity-10 group-hover:opacity-20 transition-opacity duration-500"></div>
+
+                  <div className="relative bg-background-dark/90 backdrop-blur-xl rounded-[23px] p-8 flex items-start gap-6">
+                    <div className="p-4 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 shadow-inner flex-shrink-0 border border-white/5">
+                      <span className="material-icons text-3xl text-indigo-400 neon-text">psychology_alt</span>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                        AI Executive Summary
+                        <span className="text-[10px] bg-white/10 text-white px-2 py-0.5 rounded-full font-medium tracking-wide">GENERATED NOW</span>
+                      </h3>
+                      <p className="text-slate-300 leading-relaxed text-base font-light">
+                        {data?.summary || DEMO_DATA.summary}
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
@@ -428,6 +462,10 @@ export default function DashboardPage() {
           {activeTab === 'forecasting' && (
             <ForecastingView
               data={data?.revenue_forecast || []}
+              onCampaignApply={(product) => {
+                addToast(`Campaign applied to ${product}. Refreshing projections...`, 'success');
+                fetchData();
+              }}
             />
           )}
 

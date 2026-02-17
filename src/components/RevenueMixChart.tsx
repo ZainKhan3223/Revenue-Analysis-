@@ -28,7 +28,7 @@ const RevenueMixChart = ({ data }: RevenueMixChartProps) => {
 
             <div className="h-[280px] w-full relative">
                 {!data || data.length === 0 ? (
-                    <div className="absolute inset-0 flex items-center justify-center text-slate-500 text-sm italic">
+                    <div className="absolute inset-0 flex items-center justify-center text-slate-500 text-sm font-medium tracking-wide">
                         No data available
                     </div>
                 ) : (
@@ -38,33 +38,32 @@ const RevenueMixChart = ({ data }: RevenueMixChartProps) => {
                                 data={data}
                                 cx="50%"
                                 cy="50%"
-                                innerRadius={70}
-                                outerRadius={90}
-                                paddingAngle={2}
+                                innerRadius={80}
+                                outerRadius={100}
+                                paddingAngle={4}
+                                cornerRadius={6}
                                 dataKey="value"
                                 animationDuration={1500}
-                                stroke="#101720"
-                                strokeWidth={2}
+                                stroke="none"
                             >
                                 {data.map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={entry.color} />
+                                    <Cell key={`cell-${index}`} fill={entry.color} stroke="rgba(0,0,0,0.2)" strokeWidth={1} />
                                 ))}
                             </Pie>
                             <Tooltip
                                 contentStyle={{
-                                    backgroundColor: 'rgba(10, 15, 22, 0.95)',
-                                    borderColor: '#ffffff10',
+                                    backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                                    borderColor: 'rgba(255,255,255,0.05)',
                                     borderRadius: '12px',
-                                    padding: '10px',
-                                    boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+                                    padding: '12px',
+                                    boxShadow: '0 20px 40px -10px rgba(0,0,0,0.5)',
                                     borderWidth: '1px',
-                                    fontSize: '12px',
-                                    border: 'none'
+                                    backdropFilter: 'blur(10px)'
                                 }}
                                 itemStyle={{ color: '#fff', fontWeight: 'bold' }}
-                                labelStyle={{ color: '#94a3b8', marginBottom: '4px', fontSize: '10px', textTransform: 'uppercase', fontWeight: '800' }}
+                                labelStyle={{ color: '#94a3b8', marginBottom: '4px', fontSize: '10px', textTransform: 'uppercase', fontWeight: '700' }}
                                 formatter={(value: number | string | undefined) => [
-                                    `$${(Number(value) || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+                                    `$${(Number(value) || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`,
                                     'Revenue'
                                 ]}
                             />
@@ -72,7 +71,8 @@ const RevenueMixChart = ({ data }: RevenueMixChartProps) => {
                                 verticalAlign="bottom"
                                 height={36}
                                 iconType="circle"
-                                wrapperStyle={{ fontSize: '10px', paddingTop: '20px' }}
+                                iconSize={8}
+                                wrapperStyle={{ fontSize: '11px', paddingTop: '20px', fontFamily: 'var(--font-display)', opacity: 0.8 }}
                             />
                         </PieChart>
                     </ResponsiveContainer>
@@ -80,15 +80,15 @@ const RevenueMixChart = ({ data }: RevenueMixChartProps) => {
             </div>
 
             <div className="mt-6 pt-6 border-t border-white/5 grid grid-cols-2 gap-4">
-                <div className="bg-white/5 p-3 rounded-xl border border-white/5">
-                    <p className="text-[10px] uppercase font-bold text-slate-500 mb-1">Top Performer</p>
-                    <p className="text-sm font-bold text-white truncate">
+                <div className="bg-white/5 p-4 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors">
+                    <p className="text-[10px] uppercase font-bold text-slate-500 mb-1 tracking-wider">Top Performer</p>
+                    <p className="text-sm font-bold text-white truncate text-glow">
                         {data.length > 0 ? data.reduce((prev, current) => (prev.value > current.value) ? prev : current).name : 'N/A'}
                     </p>
                 </div>
-                <div className="bg-white/5 p-3 rounded-xl border border-white/5">
-                    <p className="text-[10px] uppercase font-bold text-slate-500 mb-1">Total Streams</p>
-                    <p className="text-sm font-bold text-white">{data.length} Products</p>
+                <div className="bg-white/5 p-4 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors">
+                    <p className="text-[10px] uppercase font-bold text-slate-500 mb-1 tracking-wider">Total Streams</p>
+                    <p className="text-sm font-bold text-white text-glow">{data.length} Products</p>
                 </div>
             </div>
         </div>

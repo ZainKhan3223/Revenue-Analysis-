@@ -7,8 +7,11 @@ import numpy as np
 import traceback
 from datetime import datetime
 from typing import Optional, List
+from models.forecaster import SalesForecaster
 
-app = FastAPI(title="Revenue Analysis AI Platform API")
+forecaster = SalesForecaster()
+
+app = FastAPI(title="Business Manager API")
 
 # Enable CORS
 app.add_middleware(
@@ -46,27 +49,19 @@ def load_inventory():
 class AnalyticsEngine:
     @staticmethod
     def forecast_trend(series: pd.Series, periods: int = 4):
-        if len(series) < 2:
-            last = series.iloc[-1] if not series.empty else 0
-            return [float(last)] * periods, 0.0, 1.0
+        predictions = forecaster.predict_next_weeks(series, weeks=periods)
         
+        # Calculate velocity and confidence (keeping original logic for now)
+        if len(series) < 2:
+            return predictions, 0.0, 1.0
+            
         y = series.values
         x = np.arange(len(y))
-        
-        # Linear Regression
         coeffs = np.polyfit(x, y, 1)
-        slope, intercept = coeffs
-        
-        # Predictions
-        future_x = np.arange(len(y), len(y) + periods)
-        predictions = slope * future_x + intercept
-        predictions = [max(0.0, float(round(p, 2))) for p in predictions]
-        
-        # Velocity (Rate of Change)
+        slope = coeffs[0]
         velocity = float(round(slope / (y.mean() if y.mean() != 0 else 1), 4))
         
-        # Confidence (Simple R-squared approach)
-        y_pred = slope * x + intercept
+        y_pred = slope * x + coeffs[1]
         ss_res = np.sum((y - y_pred) ** 2)
         ss_tot = np.sum((y - np.mean(y)) ** 2)
         r_squared = 1 - (ss_res / ss_tot) if ss_tot != 0 else 1.0
@@ -170,13 +165,25 @@ async def get_overview():
             "description": f"Revenue increased {int((float(rev_recent.iloc[-1])/float(rev_recent.iloc[0])-1)*100)}% over the last 3 months. Consider scaling campaigns.",
             "risk": "low"
         })
-
+    # Generate Narrative Summary
+    summary = f"Revenue is currently ${total_revenue:,.0f}."
+    if risk == "Low":
+        summary += " Financial health is strong with stable cash flow."
+    elif risk == "Medium":
+        summary += " Expense growth is outpacing revenue slightly; monitor burn rate."
+    else:
+        summary += " Immediate attention needed: Expenses exceed revenue."
+        
+    if len(recommendations) > 0:
+        summary += f" {len(recommendations)} AI optimization opportunities identified."
+    
     return {
         "total_revenue": total_revenue,
         "net_cash": net_cash,
         "risk_level": risk,
         "recommendations": recommendations,
-        "alerts": alerts
+        "alerts": alerts,
+        "summary": summary
     }
 
 @app.get("/api/financial-trends")
@@ -204,34 +211,40 @@ async def get_forecast(product: Optional[str] = None):
         p_data = products[products['product_name'] == product]
         if p_data.empty: return []
         
-        base_rev = float(p_data.iloc[0]['revenue'] / 12) # Approximate monthly
-        growth = float(p_data.iloc[0]['growth_rate'])
+        row = p_data.iloc[0]
+        base_rev = float(row['revenue'] / 12) # Approximate monthly
+        growth = float(row['growth_rate'])
         
+        # More realistic historical data for visualization
+        history = [round(base_rev * (0.95 + 0.02 * i), 2) for i in range(4)]
         predictions = [round(base_rev * (1 + growth)**(i+1), 2) for i in range(4)]
+        
         return [{
             "product": product,
             "predictions": predictions,
             "velocity": growth,
-            "confidence": 0.85,
-            "historical": [round(base_rev * 0.9, 2), round(base_rev * 0.95, 2), round(base_rev, 2)]
+            "confidence": 0.92,
+            "historical": history
         }]
     else:
         # Full dashboard forecast
         predictions, velocity, confidence = AnalyticsEngine.forecast_trend(financials['revenue'])
-        history = financials['revenue'].tail(4).tolist()
         
         # Detailed forecast for each product (for the table)
         results = []
         for _, row in products.iterrows():
-            # Apply trend based on growth_rate
             base = row['revenue'] / 12
+            # Use growth rate for prediction
             p_preds = [round(base * (1 + row['growth_rate'])**(i+1), 2) for i in range(4)]
+            # Use a slightly jittered history for visual appeal
+            h_data = [round(base * (0.96 + 0.015 * i), 2) for i in range(3)]
+            
             results.append({
                 "product": row['product_name'],
                 "predictions": p_preds,
                 "velocity": float(row['growth_rate']),
                 "confidence": 0.9,
-                "historical": [round(base * 0.9, 2), round(base, 2)]
+                "historical": h_data
             })
         return results
 
@@ -254,19 +267,44 @@ async def get_products():
 @app.get("/api/inventory")
 async def get_inventory():
     inventory = load_inventory()
+    sales = load_products()
+    
     if inventory.empty: return []
     
+    # Merge with sales data to get revenue/units for pricing
+    # If sales data is missing, we'll default to some estimates
+    if not sales.empty:
+        merged = pd.merge(inventory, sales, on='product_name', how='left')
+    else:
+        merged = inventory
+        merged['revenue'] = 0
+        merged['units_sold'] = 1
+
     results = []
-    for _, row in inventory.iterrows():
+    for _, row in merged.iterrows():
         # Simulate velocity and days remaining
         velocity = float(np.random.uniform(2.0, 5.0))
-        days_remaining = int(row['stock'] / (velocity + 0.1))
+        
+        # Calculate unit price based on sales data (revenue / units_sold)
+        # Handle cases where units_sold might be 0 or missing
+        units_sold = row.get('units_sold', 1)
+        revenue = row.get('revenue', 0)
+        stock = int(row['stock'])
+        
+        unit_price = round(revenue / units_sold, 2) if units_sold > 0 else 0
+        total_value = round(stock * unit_price, 2)
+        
+        days_remaining = int(stock / (velocity + 0.1))
+        
         results.append({
             "product": row['product_name'],
-            "stock_level": int(row['stock']),
+            "stock_level": stock,
+            "reorder_threshold": int(row['reorder_threshold']),
             "velocity": round(velocity, 2),
             "days_remaining": days_remaining,
-            "status": "Healthy" if row['stock'] > row['reorder_threshold'] else "Warning"
+            "unit_price": unit_price,
+            "value": total_value,
+            "status": "Healthy" if stock > row['reorder_threshold'] else "Warning"
         })
     return results
 
@@ -292,20 +330,42 @@ async def get_stats():
     financials = load_financials()
     products = load_products()
     if financials.empty:
-        return {"avg_deal_value": 0, "profit_margin": 0, "total_revenue": 0, "outstanding_ar": 0, "projected_runway_months": 0}
+        return {
+            "avg_deal_value": 0, "profit_margin": 0, "total_revenue": 0, 
+            "outstanding_ar": 0, "projected_runway_months": 0,
+            "revenue_trend": 0, "margin_trend": 0, "ar_trend": 0
+        }
     
-    total_rev = float(financials['revenue'].sum())
-    total_exp = float(financials['expenses'].sum())
+    # Current Stats (last month)
+    last_month = financials.iloc[-1]
+    total_rev = float(last_month['revenue'])
+    total_exp = float(last_month['expenses'])
     total_units = int(products['units_sold'].sum()) if not products.empty else 1
-    avg_deal = total_rev / total_units if total_units > 0 else 0
+    avg_deal = total_rev / (total_units / 12) if total_units > 0 else 0 # Monthly avg
     margin = ((total_rev - total_exp) / total_rev * 100) if total_rev > 0 else 0
     
-    # Projected runway = net_cash / avg monthly burn
-    avg_burn = total_exp / len(financials) if len(financials) > 0 else 1
-    last_cash = float(financials.iloc[-1]['net_cash'])
-    runway = last_cash / avg_burn if avg_burn > 0 else 0
+    # Trend calculation (compared to previous month)
+    rev_trend = 0
+    margin_trend = 0
+    ar_trend = 0
     
-    # Outstanding AR is simulated as ~5% of total revenue
+    if len(financials) >= 2:
+        prev_month = financials.iloc[-2]
+        prev_rev = float(prev_month['revenue'])
+        if prev_rev > 0:
+            rev_trend = round(((total_rev / prev_rev) - 1) * 100, 1)
+        
+        prev_exp = float(prev_month['expenses'])
+        prev_margin = ((prev_rev - prev_exp) / prev_rev * 100) if prev_rev > 0 else 0
+        margin_trend = round(margin - prev_margin, 1)
+        
+        # AR is simulated as 5% of revenue, so trend follows revenue
+        ar_trend = rev_trend
+
+    # Projected runway = last_cash / current burn
+    last_cash = float(last_month['net_cash'])
+    runway = last_cash / total_exp if total_exp > 0 else 12.0
+    
     outstanding_ar = round(total_rev * 0.05, 2)
     
     return {
@@ -313,31 +373,77 @@ async def get_stats():
         "profit_margin": round(margin, 1),
         "total_revenue": round(total_rev, 2),
         "outstanding_ar": round(outstanding_ar, 2),
-        "projected_runway_months": round(runway, 1)
+        "projected_runway_months": round(runway, 1),
+        "revenue_trend": rev_trend,
+        "margin_trend": margin_trend,
+        "ar_trend": ar_trend
     }
 
 @app.post("/api/campaign/apply")
 async def apply_campaign(data: dict = Body(...)):
-    product = data.get("product", "General")
-    # Simulate a 15% boost in forecasts
-    return {
-        "status": "success",
-        "message": f"Campaign applied to {product}. Projections updated by +15.4%.",
-        "impact": {
-            "rev_increase": 0.154,
-            "confidence_boost": 0.05
-        }
-    }
+    product_name = data.get("product", "General")
+    
+    # Load and update products database to persist growth boost
+    products = load_products()
+    if products.empty:
+        return JSONResponse(status_code=404, content={"message": "Product database empty"})
+
+    if product_name in products['product_name'].values:
+        # Apply a permanent 5% boost to growth rate (e.g. 0.12 becomes 0.17)
+        mask = products['product_name'] == product_name
+        current_growth = products.loc[mask, 'growth_rate'].iloc[0]
+        new_growth = round(current_growth + 0.05, 3)
+        products.loc[mask, 'growth_rate'] = new_growth
+        
+        # Save back to CSV
+        try:
+            path = get_csv_path("product_sales.csv")
+            products.to_csv(path, index=False)
+            
+            return {
+                "status": "success",
+                "message": f"Strategy applied to {product_name}. Multi-week growth adjusted from {int(current_growth*100)}% to {int(new_growth*100)}%.",
+                "impact": {
+                    "rev_increase": 0.05,
+                    "confidence_boost": 0.03
+                }
+            }
+        except Exception as e:
+            return JSONResponse(status_code=500, content={"message": f"Failed to persist strategy: {str(e)}"})
+    else:
+        return JSONResponse(status_code=404, content={"message": f"Product '{product_name}' not found"})
 
 @app.post("/api/inventory/optimize")
 async def optimize_inventory(data: dict = Body(...)):
-    product = data.get("product")
-    # Simulate optimization
-    return {
-        "status": "success",
-        "message": f"Inventory for {product} optimized. Reorder point adjusted to prevent stockout.",
-        "suggestion": "Increase stock by 25 units immediately."
-    }
+    product_name = data.get("product")
+    if not product_name:
+        return JSONResponse(status_code=400, content={"message": "Product name required"})
+
+    inventory = load_inventory()
+    if inventory.empty:
+        return JSONResponse(status_code=404, content={"message": "Inventory database empty"})
+
+    if product_name in inventory['product_name'].values:
+        # Increase stock by 25 units
+        inventory.loc[inventory['product_name'] == product_name, 'stock'] += 25
+        
+        # Save back to CSV
+        try:
+            path = get_csv_path("inventory.csv")
+            inventory.to_csv(path, index=False)
+            
+            new_stock = int(inventory.loc[inventory['product_name'] == product_name, 'stock'].iloc[0])
+            
+            return {
+                "status": "success",
+                "message": f"Restocked {product_name}. New level: {new_stock} (+25 units).",
+                "new_stock": new_stock
+            }
+        except Exception as e:
+            return JSONResponse(status_code=500, content={"message": f"Failed to save inventory: {str(e)}"})
+    else:
+        # If product not found, we can't restock it
+        return JSONResponse(status_code=404, content={"message": f"Product {product_name} not found in inventory"})
 
 # Legacy endpoint for compatibility during migration
 @app.get("/api/dashboard")

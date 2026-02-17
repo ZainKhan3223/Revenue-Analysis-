@@ -8,7 +8,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Project Revenue Engine",
+  title: "Business Manager",
   description: "AI-powered revenue optimization for small business",
 };
 
